@@ -1,0 +1,1 @@
+# mysql_language_server
