@@ -1,4 +1,4 @@
-package cn.aethli.mls;
+package cn.aethli.mls.server;
 
 import java.util.concurrent.CompletableFuture;
 
