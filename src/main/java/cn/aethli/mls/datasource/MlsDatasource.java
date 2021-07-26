@@ -21,20 +21,20 @@ import java.util.logging.Logger;
  * @author selcaNyan
  */
 @Slf4j
-public class ExpansionAbleConnectionPool implements DataSource {
+public class MlsDatasource implements DataSource {
 
   private static final int DEFAULT_TIMEOUT = 30;
   private static final ConcurrentLinkedDeque<Connection> POOL = new ConcurrentLinkedDeque<>();
-  private static boolean initFlag = false;
-  private static String version;
-  private static String url;
-  private static String user;
-  private static String password;
+  private boolean initFlag = false;
+  private String version;
+  private String url;
+  private String user;
+  private String password;
   private PrintWriter logWriter;
   private volatile int timeout = DEFAULT_TIMEOUT;
 
   /** hidden construct method */
-  private ExpansionAbleConnectionPool() {
+  private MlsDatasource() {
   }
 
   /**
@@ -45,15 +45,17 @@ public class ExpansionAbleConnectionPool implements DataSource {
    * @param user     database user
    * @param password password
    */
-  public static void init(String driver, String url, String user, String password, int poolSize) throws SQLException {
+  public static MlsDatasource init(String driver, String url, String user, String password, int poolSize)
+      throws SQLException {
 
     log.info("Connection pool start init!");
+    MlsDatasource current = new MlsDatasource();
 
-    ExpansionAbleConnectionPool.url = url;
-    ExpansionAbleConnectionPool.user = user;
-    ExpansionAbleConnectionPool.password = password;
+    current.url = url;
+    current.user = user;
+    current.password = password;
 
-    if (initFlag) {
+    if (current.initFlag) {
       synchronized (POOL) {
         for (Iterator<Connection> iterator = POOL.iterator(); iterator.hasNext();) {
           Connection connection = iterator.next();
@@ -77,11 +79,12 @@ public class ExpansionAbleConnectionPool implements DataSource {
       Connection conn = DriverManager.getConnection(url, user, password);
       POOL.add(conn);
     }
-    initFlag = true;
-    version = UUID.randomUUID().toString();
+    current.initFlag = true;
+    current.version = UUID.randomUUID().toString();
+    return current;
   }
 
-  public static void clear() {
+  public void clear() {
     version = UUID.randomUUID().toString();
     synchronized (POOL) {
       for (Iterator<Connection> iterator = POOL.iterator(); iterator.hasNext();) {
@@ -106,7 +109,7 @@ public class ExpansionAbleConnectionPool implements DataSource {
     if (!POOL.isEmpty()) {
       String v = version;
       final Connection connection = POOL.removeFirst();
-      return (Connection) Proxy.newProxyInstance(ExpansionAbleConnectionPool.class.getClassLoader(),
+      return (Connection) Proxy.newProxyInstance(MlsDatasource.class.getClassLoader(),
           connection.getClass().getInterfaces(), (proxy, method, args) -> {
             if (!"close".equals(method.getName())) {
               return method.invoke(connection, args);
