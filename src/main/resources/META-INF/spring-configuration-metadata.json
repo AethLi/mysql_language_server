@@ -1,0 +1,11 @@
+{
+    "groups": [
+    ],
+    "properties": [
+        {
+            "name": "mls.cleanPoolsTaskCron",
+            "type": "java.lang.String",
+            "description":"Specify when to execute the task of cleaning up the connection pool"
+        }
+    ]
+}
