@@ -36,9 +36,9 @@ public class DataSourceManager {
      * @return
      */
     private HikariDataSource getDatasource(@NotNull HikariConfig hikariConfig) {
-        String key = String.format("%s-%s-%s", hikariConfig.getJdbcUrl(), hikariConfig.getUsername(),
+        var key = String.format("%s-%s-%s", hikariConfig.getJdbcUrl(), hikariConfig.getUsername(),
                 hikariConfig.getPassword());
-        HikariDataSource hikariDataSource = getDatasource(key);
+        var hikariDataSource = getDatasource(key);
         if (hikariDataSource == null) {
             hikariDataSource = new HikariDataSource(hikariConfig);
             POOLS.put(key, hikariDataSource);
@@ -49,14 +49,15 @@ public class DataSourceManager {
 
     /**
      * 
-     * @param config
-     * @param schemaName
-     * @return
+     * @param config Database config {@link DatabaseConfig}
+     * @param schemaName Schema name in jdbc url
+     * @return Connection
      * @throws SQLException
      */
-    public Connection getConnection(DatabaseConfig config, String schemaName) throws SQLException {
-        String url = String.format("jdbc:mysql://%s:%s/%s", config.getHost(), config.getPort(), schemaName);
-        HikariConfig hikariConfig = new HikariConfig() {
+    @NotNull
+    public Connection getConnection(@NotNull DatabaseConfig config, @NotNull String schemaName) throws SQLException {
+        var url = String.format("jdbc:mysql://%s:%s/%s", config.getHost(), config.getPort(), schemaName);
+        var hikariConfig = new HikariConfig() {
             {
                 setJdbcUrl(url);
                 setUsername(config.getUser());
@@ -67,7 +68,7 @@ public class DataSourceManager {
     }
 
     /**
-     * 
+     * Release all connection
      */
     public void closeAll() {
         POOLS.values().forEach(d -> d.close());
