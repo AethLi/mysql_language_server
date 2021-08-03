@@ -19,11 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class DataService {
+public class DatabaseService {
   @Resource
   private DataSourceManager dataSourceManager;
 
-  private DataService() {
+  private DatabaseService() {
   }
 
   public List<Map<String, String>> executeSelect(DatabaseConfig config, String schemaName, String sql)

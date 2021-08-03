@@ -21,7 +21,7 @@ public class MysqlLanguageServer implements LanguageServer {
 
     @Override
     public void exit() {
-        // TODO Auto-generated method stub
+        dataSourceManager.closeAll();
 
     }
 

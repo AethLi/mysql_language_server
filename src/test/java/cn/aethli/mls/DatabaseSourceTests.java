@@ -1,6 +1,6 @@
 package cn.aethli.mls;
 
-import cn.aethli.mls.datasource.DataService;
+import cn.aethli.mls.datasource.DatabaseService;
 import cn.aethli.mls.datasource.DataSourceManager;
 import cn.aethli.mls.model.DatabaseConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @SpringBootTest
@@ -23,7 +21,7 @@ public class DatabaseSourceTests {
     @Resource
     private DataSourceManager dataSourceManager;
     @Resource
-    private DataService dataService;
+    private DatabaseService dataService;
 
     private DatabaseConfig getDatabaseConfig() throws IOException {
         return defaultMapper.readValue(
@@ -34,8 +32,7 @@ public class DatabaseSourceTests {
     @Test
     public void selectTest() throws IOException, SQLException {
 
-        log.info(defaultMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(dataService.executeSelect(getDatabaseConfig(), "mysql",
-                        "SELECT SCHEMA_NAME name,SCHEMA_NAME schemaName FROM information_schema.SCHEMATA;")));
+        log.info(defaultMapper.writeValueAsString(dataService.executeSelect(getDatabaseConfig(), "mysql",
+                "SELECT SCHEMA_NAME name,SCHEMA_NAME schemaName FROM information_schema.SCHEMATA;")));
     }
 }
